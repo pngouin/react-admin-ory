@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ory/kratos-client": "^0.5.5-alpha.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -10,7 +11,9 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "axios": "^0.21.1",
     "prop-types": "^15.7.2",
+    "ra-data-fakerest": "^3.13.4",
     "ra-data-json-server": "^3.13.4",
     "react": "^17.0.1",
     "react-admin": "^3.13.4",
