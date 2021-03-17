@@ -11,15 +11,16 @@ export interface State {
 export interface Props {
   message?: kratos.Identity[],
 }
+const { REACT_APP_KRATOS_PRIVATE_API } = process.env;
 
 export const PostList = (props: any) => (
   <List {...props}>
       <Datagrid>
           <TextField source="id" />
-          <TextField source="traits.name.first" />
-          <TextField source="traits.name.last" />
-          <TextField source="traits.email" />
-          <BooleanField source="verifiable_addresses[0].verified" />
+          <TextField label="first name" source="traits.name.first" />
+          <TextField label="last name" source="traits.name.last" />
+          <TextField label="email" source="traits.email" />
+          <BooleanField label="verified" source="verifiable_addresses[0].verified" />
       </Datagrid>
   </List>
 );
@@ -33,7 +34,7 @@ class App extends Component<Props, State> {
   }
 
   async componentDidMount() {
-    const api = kratos.AdminApiFactory(undefined, "http://ory.test.info/.ory/kratos/private");
+    const api = kratos.AdminApiFactory(undefined, REACT_APP_KRATOS_PRIVATE_API);
     const json = await api.listIdentities();
     this.setState({ users: json.data });
   }
@@ -53,5 +54,3 @@ class App extends Component<Props, State> {
 }
 
 export default App;
-
-ReactDOM.render(<App />, document.getElementById("app"));
