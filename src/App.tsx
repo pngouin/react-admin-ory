@@ -1,57 +1,52 @@
-// import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
-// import jsonServerProvider from 'ra-data-json-server';
- import { Admin, ListGuesser, Resource } from 'react-admin';
+import { Admin, BooleanField, Datagrid, DateField, List, ListGuesser, Resource, TextField } from 'react-admin';
 import * as kratos from '@ory/kratos-client'
 import fakeDataProvider from 'ra-data-fakerest';
-
-
-
-// function App() {
-//   // const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com');
-//   // kratos.AdminApi = "http://ory.test.info/.ory/kratos/private/"
-//   const api = kratos.AdminApiFactory(undefined, "http://ory.test.info/.ory/kratos/private");
-//   let value: kratos.Identity[] =[];
-//   api.listIdentities().then((data) => value = data.data)
-//   const dataProvider = fakeDataProvider(value);
-//   return (
-//     <Admin dataProvider={dataProvider}>
-//         <Resource name="users" list={ListGuesser} />
-//     </Admin>
-//   );
-// }
-
-// export default App;
-
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 
 export interface State {
-  data: kratos.Identity[],
+  users: any[],
 }
 
-class App extends Component<void, State> {
+export interface Props {
+  message?: kratos.Identity[],
+}
+
+export const PostList = (props: any) => (
+  <List {...props}>
+      <Datagrid>
+          <TextField source="id" />
+          <TextField source="traits.name.first" />
+          <TextField source="traits.name.last" />
+          <TextField source="traits.email" />
+          <BooleanField source="verifiable_addresses[0].verified" />
+      </Datagrid>
+  </List>
+);
+
+class App extends Component<Props, State> {
+  private dataprovider = fakeDataProvider(this.state);
+
   constructor() {
-    super();
-    this.state = { data: [] };
+    super({message: []});
+    this.state = { users: [] };
   }
 
   async componentDidMount() {
-    let value: kratos.Identity[] =[];
     const api = kratos.AdminApiFactory(undefined, "http://ory.test.info/.ory/kratos/private");
-    const json = await api.listIdentities()
-    const dataProvider = fakeDataProvider(value);
+    const json = await api.listIdentities();
+    this.setState({ users: json.data });
+  }
 
-
-    this.setState({ data: json.data });
+  async componentDidUpdate() {
+    this.dataprovider = fakeDataProvider(this.state);
   }
 
   render() {
     const dataProvider = fakeDataProvider(this.state);
     return (
       <Admin dataProvider={dataProvider}>
-         <Resource name="users" list={ListGuesser} />
+         <Resource name="users" list={PostList} />
      </Admin>
     );
   }
