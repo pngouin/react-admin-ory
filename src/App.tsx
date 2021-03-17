@@ -1,8 +1,8 @@
-import { Admin, BooleanField, Datagrid, DateField, List, ListGuesser, Resource, TextField } from 'react-admin';
+import { Admin, BooleanField, Datagrid, List, Resource, TextField } from 'react-admin';
 import * as kratos from '@ory/kratos-client'
 import fakeDataProvider from 'ra-data-fakerest';
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import { Component } from "react";
+import config from './config.json';
 
 export interface State {
   users: any[],
@@ -11,7 +11,6 @@ export interface State {
 export interface Props {
   message?: kratos.Identity[],
 }
-const { REACT_APP_KRATOS_PRIVATE_API } = process.env;
 
 export const PostList = (props: any) => (
   <List {...props}>
@@ -20,6 +19,8 @@ export const PostList = (props: any) => (
           <TextField label="first name" source="traits.name.first" />
           <TextField label="last name" source="traits.name.last" />
           <TextField label="email" source="traits.email" />
+          <TextField label="role" source="traits.role" />
+          <TextField label="role" source="traits.group" />
           <BooleanField label="verified" source="verifiable_addresses[0].verified" />
       </Datagrid>
   </List>
@@ -34,7 +35,7 @@ class App extends Component<Props, State> {
   }
 
   async componentDidMount() {
-    const api = kratos.AdminApiFactory(undefined, REACT_APP_KRATOS_PRIVATE_API);
+    const api = kratos.AdminApiFactory(undefined, config.kratos_admin_api);
     const json = await api.listIdentities();
     this.setState({ users: json.data });
   }

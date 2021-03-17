@@ -1,14 +1,19 @@
-FROM node:12-alpine
+FROM node:14-alpine as builder
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY package.json .
-COPY package-lock.json .
-COPY . /usr/src/app
+COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN yarn
 
-ENTRYPOINT yarn start
+COPY . .
 
-EXPOSE 3000
+RUN yarn run build
+
+FROM nginx
+
+COPY --from=builder /usr/src/app/build /usr/share/nginx/html
+COPY --from=builder /usr/src/app/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+WORKDIR /usr/share/nginx/html
